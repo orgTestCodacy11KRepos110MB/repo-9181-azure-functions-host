@@ -276,7 +276,7 @@
                     Directory.CreateDirectory(Path.GetDirectoryName(OutputFileName));
                     if (!File.Exists(OutputFileName))
                     {
-                        ServicePointManager.Expect100Continue = true;
+                        ServicePointManager.Expect100Continue = false;
                         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                         
                         Log.LogMessage("Downloading NuGet.exe from {0}...", DownloadUrl);
