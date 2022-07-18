@@ -26,7 +26,8 @@ install:
 
     Install-Product node 6.11.2 x86
 
-   Start-FileDownload "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
+install:
+   - ps:  Start-FileDownload "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 
 build_script:
 - cmd: msbuild "WebJobs.Script.proj" /target:EnableSkipStrongNames;PackageScriptHost;PackageWebHost;TestBuild /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /property:Buildnumber=%APPVEYOR_BUILD_NUMBER%;Configuration=Release
