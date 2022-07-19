@@ -24,10 +24,10 @@ install:
 
     [System.IO.Compression.ZipFile]::ExtractToDirectory("c:\tools\php\php.zip", "c:\tools\php")
 
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls, [Net.SecurityProtocolType]::Tls11, [Net.SecurityProtocolType]::Tls12, [Net.SecurityProtocolType]::Ssl3
-    
-    [Net.ServicePointManager]::SecurityProtocol = "Tls, Tls11, Tls12, Ssl3"
-    
+    [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
+
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls
+
     Invoke-WebRequest -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
 
 build_script:
