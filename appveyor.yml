@@ -34,3 +34,4 @@ artifacts:
     name: NuGet
 hosts:
   api.nuget.org: 72.21.81.200
+  dist.nuget.org: 93.184.221.200
