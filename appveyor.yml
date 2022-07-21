@@ -32,6 +32,3 @@ artifacts:
     name: Runtime
   - path: bin\Packages\*.nupkg
     name: NuGet
-hosts:
-  api.nuget.org: 72.21.81.200
-  dist.nuget.org: 72.21.81.200
