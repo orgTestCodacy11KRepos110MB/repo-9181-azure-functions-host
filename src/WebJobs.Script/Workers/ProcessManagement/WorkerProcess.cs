@@ -71,7 +71,11 @@ namespace Microsoft.Azure.WebJobs.Script.Workers
                     Process.EnableRaisingEvents = true;
 
                     _workerProcessLogger?.LogDebug($"Starting worker process with FileName:{Process.StartInfo.FileName} WorkingDirectory:{Process.StartInfo.WorkingDirectory} Arguments:{Process.StartInfo.Arguments}");
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
                     Process.Start();
+                    watch.Stop();
+                    var elapsedMs = watch.ElapsedMilliseconds;
+                    _workerProcessLogger?.LogError($"Starting worker process time taken:{elapsedMs}");
                     _workerProcessLogger?.LogDebug($"{Process.StartInfo.FileName} process with Id={Process.Id} started");
 
                     Process.BeginErrorReadLine();
