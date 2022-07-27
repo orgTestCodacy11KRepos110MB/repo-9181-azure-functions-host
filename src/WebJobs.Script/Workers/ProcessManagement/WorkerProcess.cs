@@ -211,6 +211,11 @@ namespace Microsoft.Azure.WebJobs.Script.Workers
             Process.WaitForExit(waitTime);
         }
 
+        public void ContinueProcessTermination()
+        {
+            ProcessWaitingForTermination.SetResult(false);
+        }
+
         public void Dispose()
         {
             Disposing = true;
