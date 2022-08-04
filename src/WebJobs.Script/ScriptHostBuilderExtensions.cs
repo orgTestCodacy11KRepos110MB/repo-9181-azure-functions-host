@@ -160,17 +160,22 @@ namespace Microsoft.Azure.WebJobs.Script
                         {
                             context.Properties.Remove(ConfigurationSnapshotKey);
 
+                            var languageWorkerOptions = applicationHostOptions.RootServiceProvider.GetService<IOptionsMonitor<LanguageWorkerOptions>>();
+
                             // Validate the config for anything that needs the Scale Controller.
                             // Including Core Tools as a warning during development time.
-                            if (environment.IsWindowsConsumption() ||
+                            if (!Utility.CanWorkerIndex(languageWorkerOptions.CurrentValue.WorkerConfigs, environment))
+                            {
+                                if (environment.IsWindowsConsumption() ||
                                 environment.IsLinuxConsumption() ||
                                 (environment.IsWindowsElasticPremium() && !environment.IsRuntimeScaleMonitoringEnabled()) ||
                                 environment.IsCoreTools())
-                            {
-                                var validator = s.GetService<ExternalConfigurationStartupValidator>();
-                                var logger = s.GetService<ILoggerFactory>().CreateLogger<ExternalConfigurationStartupValidator>();
+                                {
+                                    var validator = s.GetService<ExternalConfigurationStartupValidator>();
+                                    var logger = s.GetService<ILoggerFactory>().CreateLogger<ExternalConfigurationStartupValidator>();
 
-                                return new ExternalConfigurationStartupValidatorService(validator, originalConfig, environment, logger);
+                                    return new ExternalConfigurationStartupValidatorService(validator, originalConfig, environment, logger);
+                                }
                             }
                         }
                     }
