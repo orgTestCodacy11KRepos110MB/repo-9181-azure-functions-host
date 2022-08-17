@@ -47,7 +47,7 @@
     <PackageReference Include="Microsoft.ApplicationInsights.DependencyCollector" Version="2.20.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.WindowsServer" Version="2.20.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel" Version="2.20.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.34-11938" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.34-dev637963658074481368" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Host.Storage" Version="5.0.0-beta.1" />
 	<PackageReference Include="Microsoft.Extensions.Azure" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.WebApiCompatShim" Version="2.2.0">
@@ -62,7 +62,6 @@
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="5.0.0-beta.2-10871" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.2.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Timers.Storage" Version="1.0.0-beta.1" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Script.Abstractions" Version="1.0.3-preview" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Logging.ApplicationInsights" Version="3.0.34-11938" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.3.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
@@ -78,6 +77,9 @@
     </PackageReference>
     <PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebJobs.Script.Abstractions\WebJobs.Script.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

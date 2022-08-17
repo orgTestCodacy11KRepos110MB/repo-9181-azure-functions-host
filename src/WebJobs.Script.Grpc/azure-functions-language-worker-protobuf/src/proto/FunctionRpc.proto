@@ -647,3 +647,8 @@ message RpcHttp {
   map<string,NullableString> nullable_params = 21;
   map<string,NullableString> nullable_query = 22;
 }
+
+message RichBindingReferenceType
+{
+    map<string,string> Properties = 1;
+}
