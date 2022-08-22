@@ -509,6 +509,7 @@ message BindingInfo {
       string = 1;
       binary = 2;
       stream = 3;
+      reference = 4;
     }
 
   // Type of binding (e.g. HttpTrigger)
