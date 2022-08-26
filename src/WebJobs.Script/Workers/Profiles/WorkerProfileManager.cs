@@ -34,8 +34,12 @@ namespace Microsoft.Azure.WebJobs.Script.Workers
         // Evaluate profile conditions for a language
         private bool GetEvaluatedProfile(string language, out WorkerDescriptionProfile evaluatedProfile)
         {
+            _logger.LogInformation($"GetEvaluatedProfile profiles");
+
             if (_profiles.TryGetValue(language, out List<WorkerDescriptionProfile> profiles))
             {
+                _logger.LogInformation($"GetEvaluatedProfile profiles count: {profiles.Count} ");
+
                 foreach (var profile in profiles)
                 {
                     if (profile.EvaluateConditions())
