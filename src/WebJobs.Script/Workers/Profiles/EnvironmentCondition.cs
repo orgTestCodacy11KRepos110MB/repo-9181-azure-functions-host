@@ -46,6 +46,8 @@ namespace Microsoft.Azure.WebJobs.Script.Workers
         {
             string value = _environment.GetEnvironmentVariable(Name);
 
+            _logger.LogDebug($"Evaluating EnvironmentCondition before with name: '{Name}', value: '{value}' and expression: '{Expression}'");
+
             if (string.IsNullOrEmpty(value))
             {
                 return false;
