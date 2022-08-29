@@ -207,6 +207,8 @@ namespace Microsoft.Azure.WebJobs.Script.Configuration
                     }
                     catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
                     {
+                        _logger.LogError(ex, $"HostJSONError.1 {ex.Message}, filePath:{configFilePath}");
+
                         // if no file exists we default the config
                         _logger.HostConfigNotFound();
 
@@ -251,8 +253,9 @@ namespace Microsoft.Azure.WebJobs.Script.Configuration
                     {
                         File.WriteAllText(filePath, content.ToString(Formatting.Indented));
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        _logger.LogError(ex, $"HostJSONError.2 {ex.Message}, filePath:{filePath}");
                         _logger.HostConfigCreationFailed();
                     }
                 }
