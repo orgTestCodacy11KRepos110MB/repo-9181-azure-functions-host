@@ -131,6 +131,7 @@ namespace Microsoft.Azure.WebJobs.Script.Configuration
             /// </summary>
             private JObject LoadHostConfigurationFile()
             {
+                MemLogger.Log("Inside LoadHostConfigurationFile");
                 using (_metricsLogger.LatencyEvent(MetricEventNames.LoadHostConfigurationSource))
                 {
                     // Before configuration has been fully read, configure a default logger factory
@@ -148,6 +149,7 @@ namespace Microsoft.Azure.WebJobs.Script.Configuration
                     string sanitizedJson = SanitizeHostJson(hostConfigObject);
 
                     _logger.HostConfigApplied();
+                    MemLogger.Log("HostConfigApplied");
 
                     // Do not log these until after all the configuration is done so the proper filters are applied.
                     _logger.HostConfigReading(hostFilePath);
@@ -159,6 +161,8 @@ namespace Microsoft.Azure.WebJobs.Script.Configuration
 
             private JObject InitializeHostConfig(string hostJsonPath, JObject hostConfigObject)
             {
+                MemLogger.Log($"Inside InitializeHostConfig. hostJsonPath:{hostJsonPath}");
+
                 using (_metricsLogger.LatencyEvent(MetricEventNames.InitializeHostConfiguration))
                 {
                     // If the object is empty, initialize it to include the version and write the file.
@@ -193,20 +197,25 @@ namespace Microsoft.Azure.WebJobs.Script.Configuration
 
             internal JObject LoadHostConfig(string configFilePath)
             {
+                MemLogger.Log($"Inside LoadHostConfig. configFilePath:{configFilePath}");
+
                 using (_metricsLogger.LatencyEvent(MetricEventNames.LoadHostConfiguration))
                 {
                     JObject hostConfigObject;
                     try
                     {
+                        MemLogger.Log($"Inside LoadHostConfig. Trying read {configFilePath}");
                         string json = File.ReadAllText(configFilePath);
                         hostConfigObject = JObject.Parse(json);
                     }
                     catch (JsonException ex)
                     {
+                        MemLogger.LogError(ex, $"HostJSONError.3 {ex.Message}, Unable to parse host configuration file:{configFilePath}");
                         throw new FormatException($"Unable to parse host configuration file '{configFilePath}'.", ex);
                     }
                     catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
                     {
+                        MemLogger.LogError(ex, $"HostJSONError.1 {ex.Message}, filePath:{configFilePath}");
                         _logger.LogError(ex, $"HostJSONError.1 {ex.Message}, filePath:{configFilePath}");
 
                         // if no file exists we default the config
@@ -228,6 +237,11 @@ namespace Microsoft.Azure.WebJobs.Script.Configuration
                         // Add bundle configuration if no file exists and file system is not read only
                         TryWriteHostJson(configFilePath, hostConfigObject);
                     }
+                    catch (Exception ex2)
+                    {
+                        MemLogger.LogError(ex2, $"LoadHostConfig Generic exception {ex2.Message}");
+                        throw;
+                    }
 
                     return hostConfigObject;
                 }
@@ -247,6 +261,8 @@ namespace Microsoft.Azure.WebJobs.Script.Configuration
 
             private void TryWriteHostJson(string filePath, JObject content)
             {
+                MemLogger.Log($"Inside TryWriteHostJson.filePath:{filePath}, _configurationSource.HostOptions.IsFileSystemReadOnly:{_configurationSource.HostOptions.IsFileSystemReadOnly}");
+
                 if (!_configurationSource.HostOptions.IsFileSystemReadOnly)
                 {
                     try
@@ -255,12 +271,14 @@ namespace Microsoft.Azure.WebJobs.Script.Configuration
                     }
                     catch (Exception ex)
                     {
+                        MemLogger.LogError(ex, $"HostJSONError.2 {ex.Message}, filePath:{filePath}");
                         _logger.LogError(ex, $"HostJSONError.2 {ex.Message}, filePath:{filePath}");
                         _logger.HostConfigCreationFailed();
                     }
                 }
                 else
                 {
+                    MemLogger.Log($"File system is read-only. Skipping {filePath} creation.");
                     _logger.HostConfigFileSystemReadOnly();
                 }
             }

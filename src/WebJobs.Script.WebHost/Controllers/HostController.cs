@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Mvc.WebApiCompatShim;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Azure.WebJobs.Host.Executors;
 using Microsoft.Azure.WebJobs.Host.Scale;
+using Microsoft.Azure.WebJobs.Script.Configuration;
 using Microsoft.Azure.WebJobs.Script.ExtensionBundle;
 using Microsoft.Azure.WebJobs.Script.Scale;
 using Microsoft.Azure.WebJobs.Script.WebHost.Filters;
@@ -66,6 +68,20 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost.Controllers
         [TypeFilter(typeof(EnableDebugModeFilter))]
         public async Task<IActionResult> GetHostStatus([FromServices] IScriptHostManager scriptHostManager, [FromServices] IHostIdProvider hostIdProvider, [FromServices] IServiceProvider serviceProvider = null)
         {
+            MemLogger.LogError(new Exception("Yo"), "something something");
+            MemLogger.LogError(new Exception("df"), "something r");
+            var messages = MemLogger.GetMessages();
+
+            if (HttpContext.Request.Query.ContainsKey("desc"))
+            {
+                messages = messages.Reverse().ToArray();
+            }
+
+            if (HttpContext.Request.Query.ContainsKey("logs"))
+            {
+                return Json(messages);
+            }
+
             var status = new HostStatus
             {
                 State = scriptHostManager.State.ToString(),
