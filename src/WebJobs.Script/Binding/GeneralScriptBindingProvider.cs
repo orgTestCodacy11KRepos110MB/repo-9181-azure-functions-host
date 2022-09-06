@@ -98,7 +98,7 @@ namespace Microsoft.Azure.WebJobs.Script.Binding
                         return typeof(string);
 
                     case DataType.Reference:
-                        return typeof(RichBindingReferenceType);
+                        return typeof(ParameterBindingData);
                 }
             }
 
