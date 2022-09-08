@@ -7,7 +7,7 @@ using Microsoft.Azure.WebJobs.Script.Workers.Profiles;
 using Microsoft.Azure.WebJobs.Script.Workers.Rpc;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.Azure.WebJobs.Script.Workers
+namespace Microsoft.Azure.WebJobs.Script.Workers.Profiles
 {
     /// <summary>
     /// The default profile manager that manages profiles from language workers
@@ -16,15 +16,15 @@ namespace Microsoft.Azure.WebJobs.Script.Workers
     {
         private readonly ILogger _logger;
         private readonly IEnumerable<IWorkerProfileConditionProvider> _conditionProviders;
+        private readonly IProfileStateProvider _profileStateProvider;
         private Dictionary<string, List<WorkerDescriptionProfile>> _profiles;
-        private string _activeProfile;
 
-        public WorkerProfileManager(ILogger logger, IEnumerable<IWorkerProfileConditionProvider> conditionProviders)
+        public WorkerProfileManager(ILogger logger, IEnumerable<IWorkerProfileConditionProvider> conditionProviders, IProfileStateProvider profileStateProvider)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _conditionProviders = conditionProviders ?? throw new ArgumentNullException(nameof(conditionProviders));
+            _profileStateProvider = profileStateProvider ?? throw new ArgumentNullException(nameof(profileStateProvider));
             _profiles = new Dictionary<string, List<WorkerDescriptionProfile>>();
-            _activeProfile = string.Empty;
         }
 
         /// <inheritdoc />
@@ -56,8 +56,8 @@ namespace Microsoft.Azure.WebJobs.Script.Workers
         {
             if (GetEvaluatedProfile(defaultWorkerDescription.Language, out WorkerDescriptionProfile profile))
             {
-                _logger?.LogInformation($"Worker initialized with profile - {profile.Name}, Profile ID {profile.ProfileId} from worker config.");
-                _activeProfile = profile.ProfileId;
+                _logger.LogInformation("Worker initialized with profile from worker config. Name: '{name}' ID: '{id}'", profile.Name, profile.ProfileId);
+                _profileStateProvider.SetActiveProfile(profile.ProfileId);
                 workerDescription = profile.ApplyProfile(defaultWorkerDescription);
                 return;
             }
@@ -87,9 +87,12 @@ namespace Microsoft.Azure.WebJobs.Script.Workers
             var profileId = string.Empty;
             if (GetEvaluatedProfile(workerRuntime, out WorkerDescriptionProfile profile))
             {
-               profileId = profile.ProfileId;
+                profileId = profile.ProfileId;
             }
-            return _activeProfile.Equals(profileId);
+
+            var activeProfile = _profileStateProvider.ActiveProfile;
+            _logger.LogDebug($"Active profile: {activeProfile}. Evaluated profile: {profileId}");
+            return activeProfile.Equals(profileId);
         }
     }
 }
