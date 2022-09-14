@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Google.Protobuf;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.WebJobs.Script.Abstractions.Description.Binding;
 using Microsoft.Azure.WebJobs.Script.Description;
 using Microsoft.Azure.WebJobs.Script.Extensions;
 using Microsoft.Azure.WebJobs.Script.Grpc.Messages;
@@ -53,6 +54,7 @@ namespace Microsoft.Azure.WebJobs.Script.Grpc
                     JObject jobj => new TypedData() { Json = jobj.ToString(Formatting.None) },
                     string str => new TypedData() { String = str },
                     double dbl => new TypedData() { Double = dbl },
+                    ParameterBindingData bindingData => bindingData.ToBindingData(logger),
                     byte[][] arrBytes when IsTypedDataCollectionSupported(capabilities) => arrBytes.ToRpcByteArray(),
                     string[] arrStr when IsTypedDataCollectionSupported(capabilities) => arrStr.ToRpcStringArray(),
                     double[] arrDouble when IsTypedDataCollectionSupported(capabilities) => arrDouble.ToRpcDoubleArray(),
@@ -60,6 +62,23 @@ namespace Microsoft.Azure.WebJobs.Script.Grpc
                     _ => value.ToRpcDefault(),
                 });
             }
+        }
+
+        internal static TypedData ToBindingData(this ParameterBindingData data, ILogger logger)
+        {
+            var typedData = new TypedData();
+            var bindingData = new BindingData();
+
+            foreach (var pair in data.Properties)
+            {
+                if (pair.Value != null)
+                {
+                    bindingData.Properties.Add(pair.Key, pair.Value.ToString());
+                }
+            }
+
+            typedData.BindingData = bindingData;
+            return typedData;
         }
 
         internal static async Task<TypedData> ToRpcHttp(this HttpRequest request, ILogger logger, GrpcCapabilities capabilities)
