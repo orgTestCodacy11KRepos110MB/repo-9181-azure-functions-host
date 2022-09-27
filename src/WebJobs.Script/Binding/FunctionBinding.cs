@@ -10,6 +10,7 @@ using System.IO;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Azure.WebJobs.Script.Abstractions.Description.Binding;
 using Microsoft.Azure.WebJobs.Script.Description;
 using Microsoft.Azure.WebJobs.Script.Extensibility;
 using Microsoft.Azure.WebJobs.Script.Workers.SharedMemoryDataTransfer;
@@ -219,6 +220,12 @@ namespace Microsoft.Azure.WebJobs.Script.Binding
         {
             string str = await context.Binder.BindAsync<string>(context.Attributes);
             context.Value = str;
+        }
+
+        internal static async Task BindParameterBindingData(BindingContext context)
+        {
+            var parameterBindingData = await context.Binder.BindAsync<ParameterBindingData>(context.Attributes);
+            context.Value = parameterBindingData;
         }
 
         internal static async Task BindStreamAsync(BindingContext context, FileAccess access)

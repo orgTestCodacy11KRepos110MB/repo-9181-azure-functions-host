@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Description;
+using Microsoft.Azure.WebJobs.Script.Abstractions.Description.Binding;
 using Microsoft.Azure.WebJobs.Script.Description;
 using Microsoft.Azure.WebJobs.Script.Extensibility;
 using Microsoft.Azure.WebJobs.Script.Workers.SharedMemoryDataTransfer;
@@ -110,6 +111,10 @@ namespace Microsoft.Azure.WebJobs.Script.Binding
             else if (_binding.DefaultType == typeof(string))
             {
                 await BindStringAsync(context);
+            }
+            else if (_binding.DefaultType == typeof(ParameterBindingData))
+            {
+                await BindParameterBindingData(context);
             }
             else
             {
