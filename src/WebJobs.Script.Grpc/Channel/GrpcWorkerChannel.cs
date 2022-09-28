@@ -308,6 +308,9 @@ namespace Microsoft.Azure.WebJobs.Script.Grpc
                 workerStatus.LatencyHistory = GetLatencies();
             }
 
+            _workerChannelLogger.LogInformation("Testlog: In workerStatus");
+            CheckAndRecycleFaultyLanguageWorker();
+
             return workerStatus;
         }
 
@@ -637,7 +640,7 @@ namespace Microsoft.Azure.WebJobs.Script.Grpc
                 }
 
                 var totalInvocations = IncrementTotalInvocationsOfWorker();
-                _metricsLogger.LogEvent(string.Format(MetricEventNames.WorkerInvoked, Id), functionName: null, data: string.Format("Total Invocation Per WorkerId", totalInvocations));
+                _metricsLogger.LogEvent(string.Format(MetricEventNames.WorkerInvoked, Id), functionName: null, data: $"Total Invocation Per WorkerId {totalInvocations}");
 
                 workerInvocationStopWatch = ValueStopwatch.StartNew();
 
@@ -856,9 +859,6 @@ namespace Microsoft.Azure.WebJobs.Script.Grpc
                         SendCloseSharedMemoryResourcesForInvocationRequest(outputMaps);
                     }
                 }
-
-                // ToDo: Find the correct place for calling this method
-                CheckAndRecycleFaultyLanguageWorker();
             }
         }
 
@@ -1218,6 +1218,7 @@ namespace Microsoft.Azure.WebJobs.Script.Grpc
                 return;
             }
 
+            _workerChannelLogger.LogInformation("Testlog: In OnTimer");
             CheckAndRecycleFaultyLanguageWorker();
 
             try
@@ -1242,6 +1243,8 @@ namespace Microsoft.Azure.WebJobs.Script.Grpc
 
         internal void CheckAndRecycleFaultyLanguageWorker()
         {
+            _workerChannelLogger.LogInformation("Testlog: In CheckAndRecycleFaultyLanguageWorker");
+
             Dictionary<string, int> failureRatePerWorkerId = new Dictionary<string, int>();
 
             // ToDo: Need to move this constant once finalized
