@@ -166,10 +166,10 @@ namespace Microsoft.Azure.WebJobs.Script.Workers.Rpc
             }
 
             // If a profile evaluates to true and was not previously loaded, restart worker process
-            if (!_profileManager.IsCorrectProfileLoaded(workerRuntime))
-            {
-                return false;
-            }
+            //if (!_profileManager.IsCorrectProfileLoaded(workerRuntime))
+            //{
+            //    return false;
+            //}
 
             return true;
         }
