@@ -20,6 +20,7 @@ namespace Microsoft.Azure.WebJobs.Script.Config
 
         public void Process(ITelemetry item)
         {
+            // TODO: Find a better way to figure out Functions.<FunctionName>.User logs
             if (item.Context.Properties.ContainsKey("Category") && item.Context.Properties["Category"].EndsWith(".User"))
             {
                 return;
