@@ -394,8 +394,12 @@ namespace Microsoft.Azure.WebJobs.Script
                     {
                         channel.TransmissionStatusEvent += TransmissionStatusHandler.Handler;
                     }
-
                     t.TelemetryProcessorChainBuilder.Use(next => new ScriptTelemetryProcessor(next));
+                    if (SystemEnvironment.Instance.IsApplicationInsightsAgentEnabled())
+                    {
+                        // Skip sending logs to AI if worker AI agent is configured
+                        t.TelemetryProcessorChainBuilder.Use(next => new AIAgentTelemetryProcessor(next));
+                    }
                 });
 
                 builder.Services.ConfigureOptions<ApplicationInsightsLoggerOptionsSetup>();
