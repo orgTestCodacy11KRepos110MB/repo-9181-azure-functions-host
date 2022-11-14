@@ -421,9 +421,10 @@ jobs:
     # that is being used for E2E tests. This script should be deleted and removed from the AzDO
     # pipeline when these packages are published to nuget.
     # Issue tracking removal of this task: https://github.com/Azure/azure-functions-host/issues/8910
-    displayName: 'Install MyGet nuget packages'
+    displayName: 'Install myget packages for dotnet isolated sample'
     inputs:
       targetType: 'inline'
+      workingDirectory: '$(Build.Repository.LocalPath)\sample\DotNetIsolated'
       script: |
         dotnet add package Microsoft.Azure.WebJobs --version 3.0.36 --source https://www.myget.org/F/azure-appservice-staging/api/v3/index.json
 
