@@ -428,7 +428,7 @@ jobs:
       script: |
         dotnet add package Microsoft.Azure.WebJobs --version 3.0.36 --source https://www.myget.org/F/azure-appservice-staging/api/v3/index.json
 
-        dotnet add package Microsoft.Azure.Functions.Worker.Extensions.Storage --version 5.0.2-preview1-20221104.9 --source https://www.myget.org/F/azure-appservice/api/v3/index.json
+        dotnet add package Microsoft.Azure.WebJobs.Extensions.Storage.Blobs --version 5.2.0-alpha.20221103.1 --source https://www.myget.org/F/azure-appservice/api/v3/index.json
   - task: DotNetCoreCLI@2
     displayName: 'Build dotnet isolated sample app'
     inputs:
