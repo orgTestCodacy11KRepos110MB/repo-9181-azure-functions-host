@@ -22,7 +22,7 @@ namespace Microsoft.Azure.WebJobs.Script.Workers.Rpc
 
         Task SendFunctionEnvironmentReloadRequest();
 
-        Task SendFunctionWarmupRequest();
+        Task SendWorkerWarmupRequest();
 
         Task<List<RawFunctionMetadata>> GetFunctionMetadata();
 

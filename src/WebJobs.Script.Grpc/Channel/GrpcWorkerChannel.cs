@@ -498,18 +498,18 @@ namespace Microsoft.Azure.WebJobs.Script.Grpc
             return _reloadTask.Task;
         }
 
-        public Task SendFunctionWarmupRequest()
+        public Task SendWorkerWarmupRequest()
         {
-            _workerChannelLogger.LogDebug("Sending SendFunctionWarmupRequest to WorkerProcess with Pid: '{0}'", _rpcWorkerProcess.Id);
+            _workerChannelLogger.LogDebug("Sending SendWorkerWarmupRequest to WorkerProcess with Pid: '{0}'", _rpcWorkerProcess.Id);
 
-            FunctionWarmupRequest request = new FunctionWarmupRequest()
+            WorkerWarmupRequest request = new WorkerWarmupRequest()
             {
                 WorkerDirectory = _workerConfig.Description.WorkerDirectory,
             };
 
             SendStreamingMessage(new StreamingMessage
             {
-                FunctionWarmupRequest = request
+                WorkerWarmupRequest = request
             });
 
             return _reloadTask.Task;

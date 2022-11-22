@@ -140,7 +140,7 @@ namespace Microsoft.Azure.WebJobs.Script.Workers.Rpc
             _logger.LogDebug("Completed language worker channel specialization");
         }
 
-        public async Task SendFunctionWarmupRequest()
+        public async Task SendWorkerWarmupRequest()
         {
             _logger.LogInformation("Starting SendFunctionWarmupRequest");
             _workerRuntime = _environment.GetEnvironmentVariable(RpcWorkerConstants.FunctionWorkerRuntimeSettingName);
@@ -149,7 +149,7 @@ namespace Microsoft.Azure.WebJobs.Script.Workers.Rpc
 
             if (_workerRuntime != null && rpcWorkerChannel != null)
             {
-                await rpcWorkerChannel.SendFunctionWarmupRequest();
+                await rpcWorkerChannel.SendWorkerWarmupRequest();
             }
             _logger.LogDebug("Completed SendFunctionWarmupRequest");
         }

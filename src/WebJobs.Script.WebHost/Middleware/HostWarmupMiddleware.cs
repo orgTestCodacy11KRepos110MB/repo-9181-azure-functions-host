@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Script.Extensions;
-using Microsoft.Azure.WebJobs.Script.Workers;
 using Microsoft.Azure.WebJobs.Script.Workers.Rpc;
 using Microsoft.Diagnostics.JitTrace;
 using Microsoft.Extensions.Logging;
@@ -70,26 +69,16 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost.Middleware
 
             ReadRuntimeAssemblyFiles();
 
-            SendFunctionWarmupRequest();
+            SendWorkerWarmupRequest();
 
             await WarmUp(httpContext.Request);
 
             await _next.Invoke(httpContext);
         }
 
-        private async void SendFunctionWarmupRequest()
+        private async void SendWorkerWarmupRequest()
         {
-            await _webHostRpcWorkerChannelManager.SendFunctionWarmupRequest();
-
-            //string workerRuntime = _environment.GetEnvironmentVariable(RpcWorkerConstants.FunctionWorkerRuntimeSettingName);
-
-            //IRpcWorkerChannel rpcWorkerChannel = await GetChannelAsync(workerRuntime);
-
-            //if (workerRuntime != null && rpcWorkerChannel != null)
-            //{
-            //    _logger.LogDebug("Sending SendFunctionWarmupRequest for runtime: {runtime}", workerRuntime);
-            //    await rpcWorkerChannel.SendFunctionWarmupRequest();
-            //}
+            await _webHostRpcWorkerChannelManager.SendWorkerWarmupRequest();
         }
 
         internal void ReadRuntimeAssemblyFiles()

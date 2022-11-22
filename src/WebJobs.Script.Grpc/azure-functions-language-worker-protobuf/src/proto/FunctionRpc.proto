@@ -87,9 +87,11 @@ message StreamingMessage {
     // Host gets the list of function load responses
     FunctionLoadResponseCollection function_load_response_collection = 32;
 
-    FunctionWarmupRequest function_warmup_request = 33;
+    // Host sends required metadata to warmup the worker
+    WorkerWarmupRequest worker_warmup_request = 33;
     
-    FunctionWarmupResponse function_warmup_response = 34;
+    // Worker responds after warming up with the warmup result
+    WorkerWarmupResponse worker_warmup_response = 34;
 
   }
 }
@@ -293,15 +295,6 @@ message FunctionLoadResponse {
   bool is_dependency_downloaded = 3;
 }
 
-message FunctionWarmupRequest {
-  // Full path of worker.config.json location
-  string worker_directory = 4;
-}
-
-message FunctionWarmupResponse {
-  StatusResult result = 3;
-}
-
 // Information on how a Function should be loaded and its bindings
 message RpcFunctionMetadata {
   // TODO: do we want the host's name - the language worker might do a better job of assignment than the host
@@ -428,6 +421,15 @@ message InvocationResponse {
 
   // Status of the invocation (success/failure/canceled)
   StatusResult result = 3;
+}
+
+message WorkerWarmupRequest {
+  // Full path of worker.config.json location
+  string worker_directory = 1;
+}
+
+message WorkerWarmupResponse {
+  StatusResult result = 1;
 }
 
 // Used to encapsulate data which could be a variety of types
