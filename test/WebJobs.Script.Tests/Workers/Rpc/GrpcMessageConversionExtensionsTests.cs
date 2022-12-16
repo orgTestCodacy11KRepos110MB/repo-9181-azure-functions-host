@@ -516,7 +516,7 @@ namespace Microsoft.Azure.WebJobs.Script.Tests.Workers.Rpc
             string[] arrString = { "element1", string.Empty, "element_2", null };
             TypedData actual = await arrString.ToRpc(logger, capabilities);
 
-            var expected = new RepeatedField<string> { "element1", string.Empty, "element_2", string.Empty }; // null entry should be still skipped
+            var expected = new RepeatedField<string> { "element1", string.Empty, "element_2", string.Empty }; // null entry should be converted to string.Empty because collection doesn't support null's
             Assert.Equal(expected, actual.CollectionString.String);
         }
 
