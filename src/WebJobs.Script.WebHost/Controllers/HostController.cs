@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ using Microsoft.Azure.WebJobs.Script.WebHost.Filters;
 using Microsoft.Azure.WebJobs.Script.WebHost.Management;
 using Microsoft.Azure.WebJobs.Script.WebHost.Models;
 using Microsoft.Azure.WebJobs.Script.WebHost.Security.Authorization.Policies;
+using Microsoft.Azure.WebJobs.Script.Workers.Rpc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -105,6 +107,36 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost.Controllers
             _logger.LogInformation(message);
 
             return Ok(status);
+        }
+
+        [HttpGet]
+        [Route("admin/host/workerProcesses")]
+        [Authorize(Policy = PolicyNames.AdminAuthLevelOrInternal)]
+        public async Task<IActionResult> GetWorkerProcesses([FromServices] IServiceProvider serviceProvider = null)
+        {
+            var processes = new List<WorkerProcessInfo>();
+            // When making changes to HostStatus, ensure that you update the HostStatus class in AAPT-Antares-Websites repo as well.
+            var rpcFunctionInvocationDispatcher = serviceProvider.GetService<RpcFunctionInvocationDispatcher>();
+            if (rpcFunctionInvocationDispatcher != null)
+            {
+                var channels = await rpcFunctionInvocationDispatcher.GetAllWorkerChannelsAsync();
+                if (channels != null)
+                {
+                    foreach (var channel in channels)
+                    {
+                        var processInfo = new WorkerProcessInfo()
+                        {
+                            ProcessId = channel.Id,
+                            ExeName = channel.WorkerProcess.Process.StartInfo.FileName,
+                            DebugEngine = "python",
+                            IsEligibleForOpenInBrowser = false
+                        };
+                        processes.Add(processInfo);
+                    }
+                }
+            }
+
+            return Ok(processes);
         }
 
         [HttpPost]
@@ -262,7 +294,7 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost.Controllers
         [HttpPost]
         [Route("admin/host/log")]
         [Authorize(Policy = PolicyNames.AdminAuthLevelOrInternal)]
-        public IActionResult Log([FromBody]IEnumerable<HostLogEntry> logEntries)
+        public IActionResult Log([FromBody] IEnumerable<HostLogEntry> logEntries)
         {
             if (logEntries == null)
             {
